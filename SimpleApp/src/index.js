@@ -6,26 +6,39 @@ import SearchBar from './components/search_bar';
 import VideoList from './components/video_list';
 import VideoDetail from './components/video_detail';
 
-const API_KEY = '';
+const API_KEY = 'AIzaSyAreMDiXrKC7G7knolClnQao-GBhTaMFc4';
 
 class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {videos: [] };
+    this.state = {
+      videos: [],
+      selectedVideo: null
+     };
 
-    YTSearch({key: API_KEY, term: 'dogs'}, (videos) => {
-      this.setState({ videos });
-    });
+     this.videoSearch('dogs');
 
   }
+
+  videoSearch(term) {
+    YTSearch({key: API_KEY, term: term}, (videos) => {
+      this.setState({
+         videos,
+         selectedVideo: videos[0]
+        });
+    });
+  }
+
   render(){
     return (
       <div>
-      <SearchBar />
-      <VideoDetail video={this.state.videos[0]} />
+      <SearchBar onSearchTermChange={term => this.videoSearch(term)}/>
+    <VideoDetail video={this.state.selectedVideo} />
 
-      <VideoList videos={this.state.videos} />
+      <VideoList
+        onVideoSelect={selectedVideo => this.setState({selectedVideo}) }
+        videos={this.state.videos} />
       </div>
     );
   };
